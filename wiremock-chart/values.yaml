@@ -5,10 +5,9 @@
 replicaCount: 1
 
 image:
-  repository: nginx
+  repository: "wiremock/wiremock"
   pullPolicy: IfNotPresent
-  # Overrides the image tag whose default is the chart appVersion.
-  tag: ""
+  tag: "latest"
 
 imagePullSecrets: []
 nameOverride: ""
@@ -41,7 +40,7 @@ securityContext: {}
 
 service:
   type: ClusterIP
-  port: 80
+  port: 8080
 
 ingress:
   enabled: false
@@ -73,12 +72,13 @@ resources: {}
 
 livenessProbe:
   httpGet:
-    path: /
-    port: http
+    path: /__admin/mappings
+    port: 8080
 readinessProbe:
   httpGet:
-    path: /
-    port: http
+    path: /__admin/mappings
+    port: 8080
+  initialDelaySeconds: 10
 
 autoscaling:
   enabled: false
@@ -89,6 +89,9 @@ autoscaling:
 pvc:
   enaled: false
 
+args:
+  - ''
+
 
 # Additional volumes on the output Deployment definition.
 volumes: []
@@ -96,6 +99,8 @@ volumes: []
 #   secret:
 #     secretName: mysecret
 #     optional: false
+
+
 
 
 # Additional volumeMounts on the output Deployment definition.
