@@ -1,0 +1,16 @@
+{{- $fullName := include "wiremock-chart.fullname" . }}
+{{- if .Values.pvc.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ $fullName }}-pvc
+spec:
+  accessModes:
+    {{- range .Values.pvc.accessModes }}
+    - {{ . }}
+    {{- end }}
+  resources:
+    requests:
+      storage: {{ .Values.pvc.storageRequests }}
+  storageClassName: {{ .Values.pvc.storageClass }}
+{{- end }}

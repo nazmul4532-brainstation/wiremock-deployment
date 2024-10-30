@@ -1,0 +1,51 @@
+#Integratable through postman
+#https://wiremock.org/docs/standalone/admin-api-reference/#tag/Stub-Mappings/operation/persistStubMappings
+# External values for wiremock-chart.
+
+replicaCount: 1
+
+image:
+  repository: "wiremock/wiremock"
+  pullPolicy: IfNotPresent
+  tag: "latest"
+
+
+service:
+  type: ClusterIP
+  port: 8080
+
+args: 
+  - --proxy-all
+  - http://spring-boot-demo.default.svc.cluster.local:8080
+  - --record-mappings
+  - --verbose
+
+ingress:
+  enabled: true
+  className: "nginx"
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/secure-backends: "true"
+  hosts:
+    - host: local.wiremock.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+
+livenessProbe:
+  httpGet:
+    path: /__admin/mappings
+    port: 8080
+readinessProbe:
+  httpGet:
+    path: /__admin/mappings
+    port: 8080
+  initialDelaySeconds: 10
+
+pvc:
+  enabled: true
+  storageClass: rook-cephfs
+  accessModes:
+    - ReadWriteOnce
+  storageRequests: 2Gi

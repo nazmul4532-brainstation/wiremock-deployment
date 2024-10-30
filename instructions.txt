@@ -1,0 +1,33 @@
+There are three sections to this..
+##docker-compose
+Wiremock is deployed in docker at port 8080 and then port forwarded. It uses the files and mappings folders.
+Can be used at localhost:8080
+
+docker-compose up
+
+##wiremock.yaml
+Creates two pvc using a storageclassName.. I used RWX but RWO would also work
+__files and mappings folders now exist inside the containers so they can only be used via REST APIs.
+
+kubectl apply -f wiremock.yaml
+
+Setup ingress using the ingresscontroller.yaml and ingress.yaml
+
+kubectl apply -f ingresscontroller.yaml
+kubectl apply -f ingress.yaml
+
+Update the hostpath and set it to the appropriate Node IP (one with ingress controller) in /etc/hosts
+
+##values.yaml
+Helm DEPLOY!!
+It only needs the helm package and the values file.
+The most polished and tested version of all three here.
+To deploy wiremock use:
+
+helm install wiremock wiremock-chart-0.1.0.tgz -f values.yaml --set fullnameOverride=wiremock -n wiremock --create-namespace
+
+By default.. it is configured to accept args in order to record mappings and be a partial proxy replacement
+Update the image name, pull policy accordingly,
+Set the appropriate image name and the storageClass 
+
+liveness and probin configuration is set to hit the admin endpoint for now.
