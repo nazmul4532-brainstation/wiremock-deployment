@@ -1,0 +1,12 @@
+Helm DEPLOY!!
+It only needs the helm package and the values file.
+The most polished and tested version of all three here.
+To deploy wiremock use:
+
+helm install wiremock wiremock-chart-0.1.0.tgz -f values.yaml --set fullnameOverride=wiremock -n wiremock --create-namespace
+
+By default.. it is configured to accept args in order to record mappings and be a partial proxy replacement
+Update the image name, pull policy accordingly,
+Set the appropriate image name and the storageClass 
+
+liveness and probin configuration is set to hit the admin endpoint for now.
